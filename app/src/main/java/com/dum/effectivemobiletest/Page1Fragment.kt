@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.dum.effectivemobiletest.databinding.FragmentSignInPageBinding
+import com.dum.effectivemobiletest.databinding.FragmentPage1Binding
 
-class SignInPage : Fragment() {
+class Page1Fragment : Fragment() {
 
-    lateinit var binding: FragmentSignInPageBinding
+    lateinit var binding: FragmentPage1Binding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSignInPageBinding.inflate(layoutInflater, container, false)
+        binding = FragmentPage1Binding.inflate(layoutInflater)
         return binding.root
     }
 

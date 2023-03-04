@@ -3,11 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/signInPage">
+    app:startDestination="@id/signUpPageFragment">
 
     <fragment
-        android:id="@+id/signInPage"
-        android:name="com.dum.effectivemobiletest.SignInPage"
-        android:label="fragment_sign_in_page"
-        tools:layout="@layout/fragment_sign_in_page" />
+        android:id="@+id/signUpPageFragment"
+        android:name="com.dum.effectivemobiletest.SignUpPageFragment"
+        android:label="fragment_sign_up_page"
+        tools:layout="@layout/fragment_sign_up_page" >
+        <action
+            android:id="@+id/action_signUpPageFragment_to_page1Fragment"
+            app:destination="@id/page1Fragment" />
+        <action
+            android:id="@+id/action_signUpPageFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/page1Fragment"
+        android:name="com.dum.effectivemobiletest.Page1Fragment"
+        android:label="fragment_page1"
+        tools:layout="@layout/fragment_page1" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.dum.effectivemobiletest.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_page1Fragment"
+            app:destination="@id/page1Fragment" />
+    </fragment>
 </navigation>
