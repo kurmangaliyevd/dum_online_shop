@@ -1,5 +1,8 @@
 package com.dum.effectivemobiletest
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.DialogInterface.OnClickListener
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.dum.effectivemobiletest.databinding.FragmentSignUpPageBinding
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -45,6 +49,7 @@ class SignUpPageFragment : Fragment() {
             findNavController().navigate(R.id.action_signUpPageFragment_to_loginFragment)
         }
         binding.signUpBtn.setOnClickListener {
+            it.hideKeyboard()
 
             val isFirstNameOkay = binding.firstName.text.toString().length.let { it >= 2 }
             val isLastNameOkay = binding.lastName.text.toString().length.let { it >= 2 }
@@ -85,24 +90,36 @@ class SignUpPageFragment : Fragment() {
         }
     }
 
-    suspend fun signUp(firebaseAuth: FirebaseAuth, inputEmail: String, inputPassword: String):AuthResult? {
+    suspend fun signUp(
+        firebaseAuth: FirebaseAuth,
+        inputEmail: String,
+        inputPassword: String
+    ): AuthResult? {
         return try {
-            val result = firebaseAuth.createUserWithEmailAndPassword(inputEmail,inputPassword)
+            val result = firebaseAuth.createUserWithEmailAndPassword(inputEmail, inputPassword)
                 .await()
             updateUI(result.user)
             result
-        } catch (e :Exception){
-            withContext(Dispatchers.Main){
-                Toast.makeText(context, "${e.message}", Toast.LENGTH_SHORT).show()
-                Log.d("AuthResult","${e.message}")
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle("test title")
+                    setMessage("test message")
+                    setPositiveButton(
+                        "yes"
+                    ) { dialog, _ -> dialog.dismiss() }
+                    show()
+                }
+                Log.d("AuthResult", "${e.message}")
                 progressBar.visibility = View.GONE
             }
             null
         }
     }
-    private suspend fun updateUI(firebaseUser : FirebaseUser?) {
-        Log.d("AuthResult","${firebaseUser?.email}")
-        withContext(Dispatchers.Main){
+
+    private suspend fun updateUI(firebaseUser: FirebaseUser?) {
+        Log.d("AuthResult", "${firebaseUser?.email}")
+        withContext(Dispatchers.Main) {
             progressBar.visibility = View.GONE
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_signUpPageFragment_to_page1Fragment)

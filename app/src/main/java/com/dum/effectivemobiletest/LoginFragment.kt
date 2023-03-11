@@ -1,16 +1,19 @@
 package com.dum.effectivemobiletest
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dum.effectivemobiletest.databinding.FragmentLoginBinding
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -43,6 +46,10 @@ class LoginFragment : Fragment() {
         progressBar = binding.progressCircular
 
         binding.loginBtn.setOnClickListener {
+
+            it.hideKeyboard()
+
+            binding.loginBtn.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
 
             val inputEmail = binding.emailEditText.text.toString()
@@ -52,30 +59,35 @@ class LoginFragment : Fragment() {
                 login(auth, inputEmail, inputPassword)
             }
 
-           /* auth.signInWithEmailAndPassword(inputEmail, inputPassword).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    findNavController().navigate(R.id.action_loginFragment_to_page1Fragment)
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Please check your email, password and try again",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }*/
+            /* auth.signInWithEmailAndPassword(inputEmail, inputPassword).addOnCompleteListener {
+             if (it.isSuccessful) {
+                 findNavController().navigate(R.id.action_loginFragment_to_page1Fragment)
+             } else {
+                 Toast.makeText(
+                     context,
+                     "Please check your email, password and try again",
+                     Toast.LENGTH_LONG
+                 ).show()
+             }
+         }*/
         }
     }
 
-    suspend fun login(firebaseAuth: FirebaseAuth, inputEmail: String, inputPassword: String): AuthResult? {
+
+    suspend fun login(
+        firebaseAuth: FirebaseAuth,
+        inputEmail: String,
+        inputPassword: String
+    ): AuthResult? {
         return try {
-            val result = firebaseAuth.signInWithEmailAndPassword(inputEmail,inputPassword)
+            val result = firebaseAuth.signInWithEmailAndPassword(inputEmail, inputPassword)
                 .await()
             updateUI(result.user)
             result
-        } catch (e :Exception){
-            withContext(Dispatchers.Main){
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
                 Toast.makeText(context, "${e.message}", Toast.LENGTH_SHORT).show()
-                Log.d("AuthResult","${e.message}")
+                Log.d("AuthResult", "${e.message}")
                 progressBar.visibility = View.GONE
             }
             null
@@ -83,13 +95,12 @@ class LoginFragment : Fragment() {
 
     }
 
-    private suspend fun updateUI(firebaseUser : FirebaseUser?) {
-        Log.d("AuthResult","${firebaseUser?.email}")
-        withContext(Dispatchers.Main){
+    private suspend fun updateUI(firebaseUser: FirebaseUser?) {
+        Log.d("AuthResult", "${firebaseUser?.email}")
+        withContext(Dispatchers.Main) {
             progressBar.visibility = View.GONE
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_loginFragment_to_page1Fragment)
         }
     }
-
 }
